@@ -6,12 +6,10 @@ export const MASTER_DATA_GROUPS = {
 
 export const UNIT_SORT_OPTIONS = [
   { value: '', label: 'Sắp xếp theo mặc định' },
+  { value: 'createdAt,desc', label: 'Mới nhất' },
+  { value: 'createdAt,asc', label: 'Cũ nhất' },
   { value: 'basePrice,asc', label: 'Giá tăng dần' },
   { value: 'basePrice,desc', label: 'Giá giảm dần' },
-  { value: 'areaLand,asc', label: 'Diện tích đất tăng dần' },
-  { value: 'areaLand,desc', label: 'Diện tích đất giảm dần' },
-  { value: 'unitCode,asc', label: 'Mã căn (A-Z)' },
-  { value: 'unitCode,desc', label: 'Mã căn (Z-A)' },
 ];
 
 export const AREA_RANGE_OPTIONS = [

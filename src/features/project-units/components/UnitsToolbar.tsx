@@ -36,7 +36,7 @@ export const UnitsToolbar: React.FC<UnitsToolbarProps> = ({
 
       <Stack direction="row" spacing={1.5} alignItems="center">
         {/* Dropdown Sắp xếp */}
-        <FormControl size="small" sx={{ minWidth: 190 }}>
+        <FormControl size="small" sx={{ minWidth: 200 }}>
           <Select
             value={filters.sort || ''}
             onChange={(e) => onFilterChange('sort', e.target.value)}
