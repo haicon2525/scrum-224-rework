@@ -16,20 +16,20 @@ export const UNIT_SORT_OPTIONS = [
 
 export const AREA_RANGE_OPTIONS = [
   { label: 'Chọn diện tích', min: undefined, max: undefined },
-  { label: 'Dưới 80m²', min: 0, max: 80 },
-  { label: '80m² - 100m²', min: 80, max: 100 },
-  { label: '100m² - 150m²', min: 100, max: 150 },
-  { label: '150m² - 200m²', min: 150, max: 200 },
-  { label: 'Trên 200m²', min: 200, max: undefined },
+  { label: 'Dưới 50m²', min: 0, max: 50 },
+  { label: '50m² đến 70m²', min: 50, max: 70 },
+  { label: '70m² đến 90m²', min: 70, max: 90 },
+  { label: '90m² đến 120m²', min: 90, max: 120 },
+  { label: 'Trên 120m2', min: 120, max: undefined },
 ];
 
 export const PRICE_RANGE_OPTIONS = [
   { label: 'Chọn khoảng giá', min: undefined, max: undefined },
-  { label: 'Dưới 10 tỷ', min: 0, max: 10_000_000_000 },
-  { label: '10 tỷ - 15 tỷ', min: 10_000_000_000, max: 15_000_000_000 },
-  { label: '15 tỷ - 20 tỷ', min: 15_000_000_000, max: 20_000_000_000 },
-  { label: '20 tỷ - 30 tỷ', min: 20_000_000_000, max: 30_000_000_000 },
-  { label: 'Trên 30 tỷ', min: 30_000_000_000, max: undefined },
+  { label: 'Dưới 5 tỷ', min: 0, max: 5_000_000_000 },
+  { label: '5 tới 10 tỷ', min: 5_000_000_000, max: 10_000_000_000 },
+  { label: '10 tới 15 tỷ', min: 10_000_000_000, max: 15_000_000_000 },
+  { label: '15 tới 20 tỷ', min: 15_000_000_000, max: 20_000_000_000 },
+  { label: 'Trên 20 tỷ', min: 20_000_000_000, max: undefined },
 ];
 
 export const DEFAULT_PAGE_SIZE = 10;

@@ -11,7 +11,8 @@ import {
   Box,
 } from '@mui/material';
 import { UnitQueryParams, MasterDataItem, PhaseItem } from '../types';
-import { AREA_RANGE_OPTIONS, PRICE_RANGE_OPTIONS } from '../constants';
+import PriceRangeFilter from './PriceRangeFilter';
+import AreaRangeFilter from './AreaRangeFilter';
 import { colors } from '@/theme';
 
 interface AdvancedFilterProps {
@@ -38,75 +39,47 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
   const [localPhaseId, setLocalPhaseId] = useState<number | ''>(filters.phaseId || '');
   const [localUnitTypeCode, setLocalUnitTypeCode] = useState(filters.unitTypeCode || '');
   const [localDirectionCode, setLocalDirectionCode] = useState(filters.directionCode || '');
-  const [areaRangeIndex, setAreaRangeIndex] = useState<number>(0);
-  const [priceRangeIndex, setPriceRangeIndex] = useState<number>(0);
+  const [localMinArea, setLocalMinArea] = useState<number | undefined>(filters.minAreaLand);
+  const [localMaxArea, setLocalMaxArea] = useState<number | undefined>(filters.maxAreaLand);
+  const [localMinPrice, setLocalMinPrice] = useState<number | undefined>(filters.minBasePrice);
+  const [localMaxPrice, setLocalMaxPrice] = useState<number | undefined>(filters.maxBasePrice);
 
   useEffect(() => {
     setLocalUnitCode(filters.unitCode || '');
     setLocalPhaseId(filters.phaseId || '');
     setLocalUnitTypeCode(filters.unitTypeCode || '');
     setLocalDirectionCode(filters.directionCode || '');
-
-    // Tìm index khoảng diện tích
-    const aIdx = AREA_RANGE_OPTIONS.findIndex(
-      (opt) => opt.min === filters.minAreaLand && opt.max === filters.maxAreaLand
-    );
-    setAreaRangeIndex(aIdx >= 0 ? aIdx : 0);
-
-    // Tìm index khoảng giá
-    const pIdx = PRICE_RANGE_OPTIONS.findIndex(
-      (opt) => opt.min === filters.minBasePrice && opt.max === filters.maxBasePrice
-    );
-    setPriceRangeIndex(pIdx >= 0 ? pIdx : 0);
+    setLocalMinArea(filters.minAreaLand);
+    setLocalMaxArea(filters.maxAreaLand);
+    setLocalMinPrice(filters.minBasePrice);
+    setLocalMaxPrice(filters.maxBasePrice);
   }, [filters]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const selectedArea = AREA_RANGE_OPTIONS[areaRangeIndex];
-    const selectedPrice = PRICE_RANGE_OPTIONS[priceRangeIndex];
-
     onApply({
       unitCode: localUnitCode.trim() || undefined,
       phaseId: typeof localPhaseId === 'number' ? localPhaseId : undefined,
       unitTypeCode: localUnitTypeCode || undefined,
       directionCode: localDirectionCode || undefined,
-      minAreaLand: selectedArea?.min,
-      maxAreaLand: selectedArea?.max,
-      minBasePrice: selectedPrice?.min,
-      maxBasePrice: selectedPrice?.max,
+      minAreaLand: localMinArea,
+      maxAreaLand: localMaxArea,
+      minBasePrice: localMinPrice,
+      maxBasePrice: localMaxPrice,
       pageNumber: 1,
     });
   };
 
-  const handleReset = () => {
-    setLocalUnitCode('');
-    setLocalPhaseId('');
-    setLocalUnitTypeCode('');
-    setLocalDirectionCode('');
-    setAreaRangeIndex(0);
-    setPriceRangeIndex(0);
-
-    if (onReset) {
-      onReset();
-    } else {
-      onApply({
-        unitCode: undefined,
-        phaseId: undefined,
-        unitTypeCode: undefined,
-        directionCode: undefined,
-        minAreaLand: undefined,
-        maxAreaLand: undefined,
-        minBasePrice: undefined,
-        maxBasePrice: undefined,
-        pageNumber: 1,
-      });
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
     }
   };
 
   const labelStyle = {
     fontWeight: 600,
     fontSize: '0.8125rem',
-    color: colors.textPrimary,
+    color: '#1e293b',
     mb: 0.75,
     display: 'block',
   };
@@ -115,14 +88,15 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
     bgcolor: '#ffffff',
     borderRadius: '8px',
     fontSize: '0.875rem',
+    height: '40px',
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: colors.border,
+      borderColor: colors.border || '#e2e8f0',
     },
     '&:hover .MuiOutlinedInput-notchedOutline': {
       borderColor: '#94a3b8',
     },
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: colors.primary,
+      borderColor: colors.primary || '#0284c7',
     },
   };
 
@@ -132,20 +106,20 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
       onSubmit={handleSubmit}
       elevation={0}
       sx={{
-        p: 3,
+        p: { xs: 2, sm: 3 },
         mb: 3,
         borderRadius: '12px',
         bgcolor: '#ffffff',
-        border: `1px solid ${colors.border}`,
+        border: '1px solid #e2e8f0',
         boxShadow: '0 1px 4px rgba(0, 0, 0, 0.04)',
       }}
     >
-      {/* Tiêu đề BỘ LỌC NÂNG CAO */}
+      {/* Tiêu đề BỘ LỌC NÂNG CAO chuẩn Figma */}
       <Typography
         variant="subtitle1"
         sx={{
           fontWeight: 700,
-          color: colors.deepBlue,
+          color: '#1d4ed8',
           fontSize: '0.9375rem',
           letterSpacing: 0.3,
           mb: 2.5,
@@ -154,7 +128,7 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
         BỘ LỌC NÂNG CAO
       </Typography>
 
-      {/* 2 hàng ô lọc (Mỗi hàng 3 ô trên màn hình desktop md) */}
+      {/* 2 hàng ô lọc chuẩn Frame 197 (3 cột mỗi hàng trên desktop) */}
       <Grid container spacing={2.5}>
         {/* HÀNG 1: Ô 1 - Mã căn hộ */}
         <Grid item xs={12} sm={6} md={4}>
@@ -180,6 +154,13 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               value={localPhaseId}
               onChange={(e) => setLocalPhaseId(e.target.value as number | '')}
               sx={inputControlStyle}
+              renderValue={(selected) => {
+                if (!selected) {
+                  return <span style={{ color: '#94a3b8' }}>Chọn phân khu</span>;
+                }
+                const found = phases.find((p) => p.id === selected);
+                return found?.name || selected;
+              }}
             >
               <MenuItem value="">Chọn phân khu</MenuItem>
               {phases.map((phase) => (
@@ -200,6 +181,13 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               value={localUnitTypeCode}
               onChange={(e) => setLocalUnitTypeCode(e.target.value)}
               sx={inputControlStyle}
+              renderValue={(selected) => {
+                if (!selected) {
+                  return <span style={{ color: '#94a3b8' }}>Chọn loại căn</span>;
+                }
+                const found = unitTypes.find((t) => t.code === selected);
+                return found?.value || selected;
+              }}
             >
               <MenuItem value="">Chọn loại căn</MenuItem>
               {unitTypes.map((type) => (
@@ -220,6 +208,13 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               value={localDirectionCode}
               onChange={(e) => setLocalDirectionCode(e.target.value)}
               sx={inputControlStyle}
+              renderValue={(selected) => {
+                if (!selected) {
+                  return <span style={{ color: '#94a3b8' }}>Chọn hướng đất</span>;
+                }
+                const found = directions.find((d) => d.code === selected);
+                return found?.value || selected;
+              }}
             >
               <MenuItem value="">Chọn hướng đất</MenuItem>
               {directions.map((dir) => (
@@ -231,88 +226,80 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
           </FormControl>
         </Grid>
 
-        {/* HÀNG 2: Ô 5 - Diện tích */}
+        {/* HÀNG 2: Ô 5 - Diện tích (Popover chuẩn hình 3) */}
         <Grid item xs={12} sm={6} md={4}>
           <Typography sx={labelStyle}>Diện tích</Typography>
-          <FormControl fullWidth size="small">
-            <Select
-              value={areaRangeIndex}
-              onChange={(e) => setAreaRangeIndex(Number(e.target.value))}
-              sx={inputControlStyle}
-            >
-              {AREA_RANGE_OPTIONS.map((opt, idx) => (
-                <MenuItem key={idx} value={idx}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <AreaRangeFilter
+            minArea={localMinArea}
+            maxArea={localMaxArea}
+            onChange={(min, max) => {
+              setLocalMinArea(min);
+              setLocalMaxArea(max);
+            }}
+          />
         </Grid>
 
-        {/* HÀNG 2: Ô 6 - Khoảng giá */}
+        {/* HÀNG 2: Ô 6 - Khoảng giá (Popover chuẩn hình 2) */}
         <Grid item xs={12} sm={6} md={4}>
           <Typography sx={labelStyle}>Khoảng giá</Typography>
-          <FormControl fullWidth size="small">
-            <Select
-              value={priceRangeIndex}
-              onChange={(e) => setPriceRangeIndex(Number(e.target.value))}
-              sx={inputControlStyle}
-            >
-              {PRICE_RANGE_OPTIONS.map((opt, idx) => (
-                <MenuItem key={idx} value={idx}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <PriceRangeFilter
+            minPrice={localMinPrice}
+            maxPrice={localMaxPrice}
+            onChange={(min, max) => {
+              setLocalMinPrice(min);
+              setLocalMaxPrice(max);
+            }}
+          />
         </Grid>
       </Grid>
 
-      {/* Nút "Bỏ lọc" và "Tìm kiếm" CĂN GIỮA */}
+      {/* Nút "Đóng" và "Tìm kiếm" CĂN GIỮA chuẩn Figma hình 1, 2, 3 */}
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           gap: 2,
-          mt: 3.5,
+          mt: 3,
         }}
       >
         <Button
-          variant="outlined"
+          variant="contained"
           type="button"
-          onClick={handleReset}
+          onClick={handleClose}
           sx={{
-            minWidth: 120,
+            minWidth: 100,
             height: 38,
             borderRadius: '8px',
             textTransform: 'none',
             fontWeight: 600,
             fontSize: '0.875rem',
-            color: colors.textSecondary,
-            borderColor: '#cbd5e1',
+            bgcolor: '#e2e8f0',
+            color: '#334155',
+            boxShadow: 'none',
             '&:hover': {
-              borderColor: '#94a3b8',
-              bgcolor: '#f8fafc',
+              bgcolor: '#cbd5e1',
+              boxShadow: 'none',
             },
           }}
         >
-          Bỏ lọc
+          Đóng
         </Button>
 
         <Button
           variant="contained"
           type="submit"
           sx={{
-            minWidth: 130,
+            minWidth: 110,
             height: 38,
             borderRadius: '8px',
             textTransform: 'none',
             fontWeight: 600,
             fontSize: '0.875rem',
-            bgcolor: colors.primary,
+            background: 'linear-gradient(90deg, #1d4ed8 0%, #0284c7 100%)',
+            boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
             '&:hover': {
-              bgcolor: colors.primaryHover,
+              background: 'linear-gradient(90deg, #1e40af 0%, #0369a1 100%)',
             },
           }}
         >

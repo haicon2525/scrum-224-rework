@@ -3,31 +3,38 @@ import { Chip, ChipProps } from '@mui/material';
 import { colors } from '@/theme';
 
 interface StatusChipProps {
-  statusCode: string;
-  label?: string;
+  statusCode?: string | null;
+  label?: string | null;
   size?: ChipProps['size'];
 }
 
 export const StatusChip: React.FC<StatusChipProps> = ({ statusCode, label, size = 'small' }) => {
-  const displayLabel = label || statusCode;
-  const upper = statusCode.toUpperCase();
+  const upper = String(statusCode || '').trim().toUpperCase();
+  const rawLabel = String(label || '').trim().toLowerCase();
 
-  const isAvailable =
-    upper.includes('AVAILABLE') ||
-    upper.includes('CON_HANG') ||
-    displayLabel.toLowerCase().includes('còn hàng');
-
+  // Kiểm tra trạng thái đã bán (gồm SOLD, SOLD_OUT, DA_BAN, 'đã bán', 'sold out'...)
   const isSold =
     upper.includes('SOLD') ||
     upper.includes('DA_BAN') ||
-    displayLabel.toLowerCase().includes('đã bán');
+    rawLabel.includes('đã bán') ||
+    rawLabel.includes('sold');
 
+  // Kiểm tra trạng thái còn hàng (gồm AVAILABLE, CON_HANG, 'còn hàng'...)
+  const isAvailable =
+    upper.includes('AVAILABLE') ||
+    upper.includes('CON_HANG') ||
+    rawLabel.includes('còn hàng') ||
+    rawLabel.includes('available');
+
+  // Kiểm tra trạng thái giữ chỗ / đặt cọc
   const isHold =
     upper.includes('HOLD') ||
     upper.includes('GIU_CHO') ||
-    displayLabel.toLowerCase().includes('giữ chỗ');
+    upper.includes('DEPOSIT') ||
+    rawLabel.includes('giữ chỗ') ||
+    rawLabel.includes('đặt cọc');
 
-  let chipStyles = {
+  const chipStyles = {
     fontWeight: 600,
     fontSize: '0.75rem',
     height: 26,
@@ -35,25 +42,11 @@ export const StatusChip: React.FC<StatusChipProps> = ({ statusCode, label, size 
     px: 0.5,
   };
 
-  if (isAvailable) {
-    return (
-      <Chip
-        label={displayLabel}
-        size={size}
-        sx={{
-          ...chipStyles,
-          bgcolor: colors.statusAvailableBg,
-          color: colors.statusAvailableText,
-          border: '1px solid #a7f0e0',
-        }}
-      />
-    );
-  }
-
+  // Chuẩn hóa 1 chữ duy nhất "Đã bán"
   if (isSold) {
     return (
       <Chip
-        label={displayLabel}
+        label="Đã bán"
         size={size}
         sx={{
           ...chipStyles,
@@ -65,10 +58,27 @@ export const StatusChip: React.FC<StatusChipProps> = ({ statusCode, label, size 
     );
   }
 
+  // Chuẩn hóa 1 chữ duy nhất "Còn hàng"
+  if (isAvailable) {
+    return (
+      <Chip
+        label="Còn hàng"
+        size={size}
+        sx={{
+          ...chipStyles,
+          bgcolor: colors.statusAvailableBg,
+          color: colors.statusAvailableText,
+          border: '1px solid #a7f0e0',
+        }}
+      />
+    );
+  }
+
+  // Chuẩn hóa 1 chữ duy nhất "Giữ chỗ"
   if (isHold) {
     return (
       <Chip
-        label={displayLabel}
+        label="Giữ chỗ"
         size={size}
         sx={{
           ...chipStyles,
@@ -80,9 +90,10 @@ export const StatusChip: React.FC<StatusChipProps> = ({ statusCode, label, size 
     );
   }
 
+  const fallbackLabel = label || statusCode || '-';
   return (
     <Chip
-      label={displayLabel}
+      label={fallbackLabel}
       size={size}
       sx={{
         ...chipStyles,

@@ -30,7 +30,7 @@ export const UnitsToolbar: React.FC<UnitsToolbarProps> = ({
         gap: 2,
       }}
     >
-      <Typography variant="h6" sx={{ fontWeight: 800, color: '#0f172a', letterSpacing: 0.5 }}>
+      <Typography variant="h6" sx={{ fontWeight: 800, color: '#1d4ed8', letterSpacing: 0.5 }}>
         BẢNG HÀNG
       </Typography>
 
@@ -45,6 +45,10 @@ export const UnitsToolbar: React.FC<UnitsToolbarProps> = ({
               borderRadius: '8px',
               bgcolor: '#fff',
               fontSize: '0.875rem',
+              height: '40px',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#e2e8f0',
+              },
             }}
           >
             {UNIT_SORT_OPTIONS.map((opt) => (
@@ -65,6 +69,10 @@ export const UnitsToolbar: React.FC<UnitsToolbarProps> = ({
               borderRadius: '8px',
               bgcolor: '#fff',
               fontSize: '0.875rem',
+              height: '40px',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#e2e8f0',
+              },
             }}
           >
             <MenuItem value="">Tất cả trạng thái</MenuItem>
@@ -76,17 +84,22 @@ export const UnitsToolbar: React.FC<UnitsToolbarProps> = ({
           </Select>
         </FormControl>
 
-        {/* Nút Bộ lọc */}
+        {/* Nút Bộ lọc chuẩn Figma */}
         <Button
           variant="contained"
-          startIcon={<FilterAltIcon />}
+          startIcon={<FilterAltIcon sx={{ fontSize: '18px !important' }} />}
           onClick={onToggleAdvanced}
           sx={{
             borderRadius: '8px',
             textTransform: 'none',
             fontWeight: 600,
-            bgcolor: '#0284c7',
-            '&:hover': { bgcolor: '#0369a1' },
+            fontSize: '0.875rem',
+            height: '40px',
+            background: 'linear-gradient(90deg, #1d4ed8 0%, #0284c7 100%)',
+            boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
+            '&:hover': {
+              background: 'linear-gradient(90deg, #1e40af 0%, #0369a1 100%)',
+            },
             px: 2.5,
           }}
         >

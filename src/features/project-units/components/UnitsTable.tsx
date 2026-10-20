@@ -51,6 +51,10 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
   onPageChange,
   onLocationClick,
 }) => {
+  const safeUnits = Array.isArray(units) ? units : [];
+  const safeTotalPages = Math.max(1, totalPages || 1);
+  const safePageNumber = Math.min(Math.max(1, pageNumber || 1), safeTotalPages);
+
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 10 }}>
@@ -59,7 +63,7 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
     );
   }
 
-  if (units.length === 0) {
+  if (safeUnits.length === 0) {
     return (
       <Paper
         elevation={0}
@@ -67,8 +71,9 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
           p: 6,
           textAlign: 'center',
           borderRadius: '10px',
-          border: `1px dashed ${colors.border}`,
-          bgcolor: colors.bgSoft,
+          border: `1px dashed ${colors.border || '#e2e8f0'}`,
+          bgcolor: colors.bgSoft || '#f8fafc',
+          my: 2,
         }}
       >
         <Typography color="text.secondary" fontWeight={500}>
@@ -124,7 +129,7 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {units.map((unit) => {
+            {safeUnits.map((unit, index) => {
               const unitTypeLabel =
                 unit.unitTypeName || (unit.unitTypeCode ? unitTypeMap[unit.unitTypeCode] || unit.unitTypeCode : '-');
               const directionLabel = formatDirections(unit.directions || unit.directionCodes, directionMap);
@@ -133,18 +138,20 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
               const statusLabel =
                 unit.statusName || (unit.statusCode ? statusMap[unit.statusCode] || unit.statusCode : '-');
 
-              // Kiểm tra tình trạng đã bán để chuyển màu badge mã căn sang cam nhạt như trong Figma
+              // Kiểm tra an toàn tình trạng đã bán để chuyển màu badge mã căn
+              const upperCode = unit.statusCode?.toUpperCase() || '';
               const isSold =
-                unit.statusCode?.toUpperCase().includes('SOLD') ||
-                unit.statusCode?.toUpperCase().includes('DA_BAN') ||
-                statusLabel.toLowerCase().includes('đã bán');
+                upperCode.includes('SOLD') ||
+                upperCode.includes('DA_BAN') ||
+                (typeof statusLabel === 'string' &&
+                  (statusLabel.toLowerCase().includes('đã bán') || statusLabel.toLowerCase().includes('sold')));
 
               const unitCodeBg = isSold ? colors.badgeOrangeBg : colors.badgeBlueBg;
               const unitCodeText = isSold ? colors.badgeOrangeText : colors.badgeBlueText;
 
               return (
                 <TableRow
-                  key={unit.id}
+                  key={unit.id || unit.unitCode || index}
                   hover
                   sx={{
                     '&:hover': { bgcolor: 'rgba(248, 250, 252, 0.8)' },
@@ -222,14 +229,14 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
           gap: 2,
         }}
       >
-        {/* Bên trái: Trang [ 1 v ] Của {totalPages} */}
+        {/* Bên trái: Trang [ 1 v ] Của {safeTotalPages} */}
         <Stack direction="row" spacing={1} alignItems="center">
           <Typography variant="body2" color="text.secondary">
             Trang
           </Typography>
           <Select
             size="small"
-            value={pageNumber}
+            value={safePageNumber}
             onChange={(e) => onPageChange?.(Number(e.target.value))}
             sx={{
               height: 32,
@@ -238,21 +245,21 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
               bgcolor: '#ffffff',
             }}
           >
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            {Array.from({ length: safeTotalPages }, (_, i) => i + 1).map((p) => (
               <MenuItem key={p} value={p}>
                 {p}
               </MenuItem>
             ))}
           </Select>
           <Typography variant="body2" color="text.secondary">
-            Của {totalPages}
+            Của {safeTotalPages}
           </Typography>
         </Stack>
 
         {/* Bên phải: Phân trang các nút */}
         <Pagination
-          count={totalPages}
-          page={pageNumber}
+          count={safeTotalPages}
+          page={safePageNumber}
           onChange={(_, val) => onPageChange?.(val)}
           color="primary"
           shape="rounded"

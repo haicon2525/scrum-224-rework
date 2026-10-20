@@ -69,9 +69,9 @@ export const UnitsSection: React.FC<UnitsSectionProps> = ({ projectId }) => {
 
       {/* Bảng danh sách căn hộ & phân trang */}
       <UnitsTable
-        units={unitsResponse?.data}
+        units={unitsResponse?.data || []}
         isLoading={isLoadingUnits}
-        pageNumber={unitsResponse?.pageNumber || filters.pageNumber || 1}
+        pageNumber={filters.pageNumber || 1}
         pageSize={unitsResponse?.pageSize || filters.pageSize || DEFAULT_PAGE_SIZE}
         totalPages={unitsResponse?.totalPages || 1}
         totalElements={unitsResponse?.totalElements || 0}
