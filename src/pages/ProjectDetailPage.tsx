@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
-  Tabs,
-  Tab,
   Box,
   Typography,
   Breadcrumbs,
@@ -15,6 +13,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  CircularProgress,
 } from '@mui/material';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -23,19 +22,84 @@ import AuthGate from '../components/auth/AuthGate';
 import { useAuth } from '../contexts/AuthContext';
 import Footer from '../components/layout/Footer';
 import ProjectTabsBar from '../components/layout/ProjectTabsBar';
+import HeroBanner from '../features/project-units/components/HeroBanner';
 import RealEstateLogo from '../components/common/RealEstateLogo';
 import { colors } from '@/theme';
+import httpClient from '@/lib/httpClient';
+
+export interface ProjectItem {
+  id: number;
+  code: string;
+  name: string;
+  address?: string;
+  shortDescription?: string;
+  fileInfo?: {
+    id: number;
+    fullLink?: string;
+    originalName?: string;
+  } | null;
+}
 
 export const ProjectDetailPage: React.FC = () => {
-  const { id = '1' } = useParams<{ id: string }>();
-  const projectId = Number(id) || 1;
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const rawId = Number(id);
+
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [currentProject, setCurrentProject] = useState<ProjectItem | null>(null);
+  const [loadingProject, setLoadingProject] = useState<boolean>(true);
+
   const [activeTab, setActiveTab] = useState(4); // Tab "Quỹ căn" index 4
   const { user, isAuthenticated, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-  };
+  // 1. Tải danh sách dự án để chọn và lấy thông tin chi tiết
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProjects = async () => {
+      try {
+        setLoadingProject(true);
+        const res = await httpClient.get('/portal/projects/search', {
+          params: { pageNumber: 0, pageSize: 50 },
+        });
+
+        const list: ProjectItem[] = res.data?.data || res.data || [];
+        if (!isMounted) return;
+        setProjects(list);
+
+        if (list.length > 0) {
+          // Tìm dự án theo ID trên URL, nếu không thấy thì ưu tiên Ocean Park 2 & 3 hoặc lấy dự án đầu tiên
+          let found = list.find((p) => p.id === rawId);
+          if (!found) {
+            found =
+              list.find(
+                (p) =>
+                  p.name.toLowerCase().includes('ocean park 2 & 3') ||
+                  p.name.toLowerCase().includes('ocean park 3')
+              ) || list[0];
+          }
+
+          setCurrentProject(found);
+
+          // Nếu URL ID khác ID thực tế tìm được, cập nhật lại URL
+          if (found && found.id !== rawId) {
+            navigate(`/projects/${found.id}`, { replace: true });
+          }
+        }
+      } catch (err) {
+        console.error('Lỗi khi tải dự án:', err);
+      } finally {
+        if (isMounted) setLoadingProject(false);
+      }
+    };
+
+    fetchProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [rawId, navigate]);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -44,6 +108,13 @@ export const ProjectDetailPage: React.FC = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  const projectName = currentProject?.name || 'VINHOMES OCEAN PARK 3';
+  const projectDesc =
+    currentProject?.shortDescription ||
+    `Theo dõi thông tin chi tiết và bảng giá, mặt bằng, tiến độ và chính sách bán hàng dự án ${projectName}.`;
+  const bannerImgUrl = currentProject?.fileInfo?.fullLink;
+  const currentProjectId = currentProject?.id || rawId || 65;
 
   return (
     <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -106,79 +177,13 @@ export const ProjectDetailPage: React.FC = () => {
 
       {/* Main Body */}
       <Container maxWidth="xl" sx={{ pt: 2.5, flex: 1 }}>
-        {/* Breadcrumbs */}
-        <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 1, fontSize: '0.8125rem' }}>
-          <Link underline="hover" color="inherit" href="#">
-            Dự án
-          </Link>
-          <Typography color="text.primary" sx={{ fontSize: '0.8125rem', fontWeight: 500 }}>
-            Vinhomes Ocean Park 3
-          </Typography>
-        </Breadcrumbs>
-
-        {/* Header title & share button */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Box>
-            <Typography variant="h5" sx={{ fontWeight: 800, color: colors.deepBlue, letterSpacing: 0.5 }}>
-              VINHOMES OCEAN PARK 3
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Theo dõi thông tin chi tiết và bảng giá, mặt bằng, tiến độ và chính sách bán hàng dự án VINHOMES OCEAN PARK 3.
-            </Typography>
-          </Box>
-
-          <Button
-            variant="contained"
-            startIcon={<ShareOutlinedIcon />}
-            sx={{
-              borderRadius: '8px',
-              textTransform: 'none',
-              bgcolor: colors.primary,
-              '&:hover': { bgcolor: colors.primaryHover },
-              px: 2.5,
-            }}
-          >
-            Chia sẻ
-          </Button>
-        </Box>
-
-        {/* Banner Hero Image */}
-        <Box
-          sx={{
-            width: '100%',
-            height: { xs: 200, sm: 280, md: 340 },
-            borderRadius: '16px',
-            overflow: 'hidden',
-            mb: 2.5,
-            position: 'relative',
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #f59e0b 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-          }}
-        >
-          <Box sx={{ textAlign: 'center', color: '#ffffff', px: 2, zIndex: 1 }}>
-            <Typography
-              variant="h6"
-              sx={{ fontStyle: 'italic', fontWeight: 500, letterSpacing: 1, textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
-            >
-              Siêu quần thể đô thị biển
-            </Typography>
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 900,
-                letterSpacing: 1.5,
-                textShadow: '0 3px 8px rgba(0,0,0,0.4)',
-                mt: 0.5,
-                fontSize: { xs: '1.5rem', sm: '2.2rem', md: '2.8rem' },
-              }}
-            >
-              VINHOMES OCEAN PARK 2 & 3
-            </Typography>
-          </Box>
-        </Box>
+        {/* Hero Banner Component */}
+        <HeroBanner
+          projectName={projectName}
+          projectDescription={projectDesc}
+          bannerUrl={bannerImgUrl}
+          loading={loadingProject}
+        />
 
         {/* Tabs Bar chuẩn Figma */}
         <ProjectTabsBar activeTab={activeTab} onTabChange={setActiveTab} />
@@ -186,7 +191,7 @@ export const ProjectDetailPage: React.FC = () => {
         {/* Tab contents */}
         {activeTab === 4 && (
           <AuthGate>
-            <UnitsSection projectId={projectId} />
+            <UnitsSection projectId={currentProjectId} />
           </AuthGate>
         )}
 

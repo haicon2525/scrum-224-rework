@@ -3,8 +3,16 @@ import { UnitListResponse, UnitQueryParams, UnitItem, BaseResponse } from '../ty
 
 export const unitApi = {
   getUnits: async (params: UnitQueryParams): Promise<UnitListResponse> => {
+    // Loại bỏ các param rỗng (undefined, null, "") trước khi gọi API
+    const cleanParams: Record<string, unknown> = {};
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== '') {
+        cleanParams[key] = val;
+      }
+    });
+
     const response = await httpClient.get<UnitListResponse>('/portal/units/search', {
-      params,
+      params: cleanParams,
     });
     return response.data;
   },

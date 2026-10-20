@@ -20,7 +20,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+    // Đọc accessToken (hoặc fallback token cũ nếu có)
+    const savedToken =
+      localStorage.getItem('accessToken') ||
+      sessionStorage.getItem('accessToken') ||
+      localStorage.getItem('token') ||
+      sessionStorage.getItem('token');
     const savedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
 
     if (savedToken) {
@@ -35,12 +40,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setUser({ username: 'User' });
       }
     }
+
+    const handleUnauthorized = () => {
+      logout();
+    };
+
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => {
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
   }, []);
 
   const login = (tokens: TokenResponse, username: string = '', remember: boolean = true) => {
     const storage = remember ? localStorage : sessionStorage;
 
-    storage.setItem('token', tokens.accessToken);
+    // Chỉ ghi key 'accessToken' khi đăng nhập thành công
     storage.setItem('accessToken', tokens.accessToken);
     if (tokens.refreshToken) {
       storage.setItem('refreshToken', tokens.refreshToken);
@@ -54,13 +68,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
 
-    sessionStorage.removeItem('token');
     sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('token');
     sessionStorage.removeItem('refreshToken');
     sessionStorage.removeItem('user');
 

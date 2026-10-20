@@ -127,7 +127,7 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
             {units.map((unit) => {
               const unitTypeLabel =
                 unit.unitTypeName || (unit.unitTypeCode ? unitTypeMap[unit.unitTypeCode] || unit.unitTypeCode : '-');
-              const directionLabel = formatDirections(unit.directionCodes, directionMap);
+              const directionLabel = formatDirections(unit.directions || unit.directionCodes, directionMap);
               const phaseLabel =
                 unit.phaseName || (unit.phaseId ? phaseMap[unit.phaseId] || `Phân khu ${unit.phaseId}` : '-');
               const statusLabel =
