@@ -25,7 +25,21 @@ export const formatDirections = (
 ): string => {
   if (!directions) return '-';
 
-  const list = Array.isArray(directions) ? directions : [directions];
+  let list: (DirectionItem | string)[] = [];
+  if (Array.isArray(directions)) {
+    list = directions;
+  } else if (typeof directions === 'string') {
+    list = directions.includes(',')
+      ? directions.split(',')
+      : directions.includes('/')
+      ? directions.split('/')
+      : directions.includes(';')
+      ? directions.split(';')
+      : [directions];
+  } else if (typeof directions === 'object') {
+    list = [directions];
+  }
+
   if (list.length === 0) return '-';
 
   const formatted = list
@@ -35,16 +49,16 @@ export const formatDirections = (
       // Trường hợp item là object { code, value } từ backend
       if (typeof item === 'object') {
         if ('value' in item && item.value) {
-          return item.value;
+          return String(item.value).trim();
         }
         if ('code' in item && item.code) {
-          const upper = item.code.trim().toUpperCase();
+          const upper = String(item.code).trim().toUpperCase();
           return masterDataMap?.[item.code] || DEFAULT_DIRECTION_MAP[upper] || item.code;
         }
         return '';
       }
 
-      // Trường hợp item là chuỗi mã hướng
+      // Trường hợp item là chuỗi mã hướng hoặc tên hướng
       const codeStr = String(item).trim();
       const upper = codeStr.toUpperCase();
       if (masterDataMap && masterDataMap[codeStr]) {
@@ -54,7 +68,7 @@ export const formatDirections = (
     })
     .filter(Boolean);
 
-  return formatted.length > 0 ? formatted.join(', ') : '-';
+  return formatted.length > 0 ? formatted.join(' - ') : '-';
 };
 
 export default formatDirections;

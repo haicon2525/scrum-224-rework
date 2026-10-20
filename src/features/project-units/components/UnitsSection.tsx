@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import UnitsToolbar from './UnitsToolbar';
 import AdvancedFilter from './AdvancedFilter';
 import UnitsTable from './UnitsTable';
+import UnitDetailModal from './UnitDetailModal';
 import { useUnits } from '../hooks/useUnits';
 import { useMasterData } from '../hooks/useMasterData';
 import { useUnitFilters } from '../hooks/useUnitFilters';
@@ -15,6 +16,7 @@ interface UnitsSectionProps {
 
 export const UnitsSection: React.FC<UnitsSectionProps> = ({ projectId }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [selectedUnit, setSelectedUnit] = useState<UnitItem | null>(null);
 
   const { filters, updateFilter, updateMultipleFilters, resetFilters } = useUnitFilters({
     projectId,
@@ -141,6 +143,19 @@ export const UnitsSection: React.FC<UnitsSectionProps> = ({ projectId }) => {
         phaseMap={phaseMap}
         statusMap={statusMap}
         onPageChange={(page) => updateFilter('pageNumber', page)}
+        onLocationClick={handleLocationClick}
+        onUnitClick={(unit) => setSelectedUnit(unit)}
+      />
+
+      {/* Modal chi tiết căn hộ khi nhấn vào mã căn */}
+      <UnitDetailModal
+        unit={selectedUnit}
+        open={Boolean(selectedUnit)}
+        onClose={() => setSelectedUnit(null)}
+        unitTypeMap={unitTypeMap}
+        directionMap={directionMap}
+        phaseMap={phaseMap}
+        statusMap={statusMap}
         onLocationClick={handleLocationClick}
       />
     </Box>

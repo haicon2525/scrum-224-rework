@@ -36,6 +36,7 @@ interface UnitsTableProps {
   statusMap?: Record<string, string>;
   onPageChange?: (page: number) => void;
   onLocationClick?: (unit: UnitItem) => void;
+  onUnitClick?: (unit: UnitItem) => void;
 }
 
 export const UnitsTable: React.FC<UnitsTableProps> = ({
@@ -50,6 +51,7 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
   statusMap = {},
   onPageChange,
   onLocationClick,
+  onUnitClick,
 }) => {
   const safeUnits = Array.isArray(units) ? units : [];
   const safeTotalPages = Math.max(1, totalPages || 1);
@@ -166,11 +168,12 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
                     />
                   </TableCell>
 
-                  {/* Cột 2: Mã căn (Badge) */}
+                  {/* Cột 2: Mã căn (Badge bấm để xem chi tiết) */}
                   <TableCell sx={{ py: 1.5 }}>
                     <Chip
                       label={unit.unitCode}
                       size="small"
+                      onClick={() => onUnitClick?.(unit)}
                       sx={{
                         bgcolor: unitCodeBg,
                         color: unitCodeText,
@@ -179,6 +182,13 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
                         borderRadius: '6px',
                         height: 26,
                         px: 0.5,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          opacity: 0.85,
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
+                        },
                       }}
                     />
                   </TableCell>
