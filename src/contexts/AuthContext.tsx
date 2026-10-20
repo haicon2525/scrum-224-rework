@@ -1,16 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { TokenResponse } from '@/api/authApi';
 
 export interface User {
-  id: string | number;
-  name: string;
-  email: string;
-  role?: string;
+  username: string;
+  name?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (token: string, user: User) => void;
+  login: (tokens: TokenResponse, username?: string, remember?: boolean) => void;
   logout: () => void;
 }
 
@@ -18,33 +17,66 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    if (token && savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (e) {
-        console.error('Failed to parse user session', e);
+    const savedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const savedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+
+    if (savedToken) {
+      setToken(savedToken);
+      if (savedUser) {
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch {
+          setUser({ username: 'User' });
+        }
+      } else {
+        setUser({ username: 'User' });
       }
     }
   }, []);
 
-  const login = (token: string, userData: User) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
+  const login = (tokens: TokenResponse, username: string = '', remember: boolean = true) => {
+    const storage = remember ? localStorage : sessionStorage;
+
+    storage.setItem('token', tokens.accessToken);
+    storage.setItem('accessToken', tokens.accessToken);
+    if (tokens.refreshToken) {
+      storage.setItem('refreshToken', tokens.refreshToken);
+    }
+
+    const userData = { username, name: username.split('@')[0] };
+    storage.setItem('user', JSON.stringify(userData));
+
+    setToken(tokens.accessToken);
     setUser(userData);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('refreshToken');
+    sessionStorage.removeItem('user');
+
+    setToken(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: Boolean(user), login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: Boolean(token),
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -57,3 +89,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export default AuthContext;
