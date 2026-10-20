@@ -100,8 +100,9 @@ export const UnitsSection: React.FC<UnitsSectionProps> = ({ projectId }) => {
   }, [displayUnits, currentPage, pageSize]);
 
   const handleLocationClick = (unit: UnitItem) => {
-    console.log('Xem vị trí căn:', unit.unitCode);
-    // Có thể mở drawer/modal bản đồ nếu có
+    // Mở tab mới dẫn thẳng đến tab "Mặt bằng quỹ căn" (tab=3) để định vị và zoom vào căn hộ
+    const url = `/projects/${projectId}?tab=3&unitId=${unit.id}&unitCode=${encodeURIComponent(unit.unitCode)}`;
+    window.open(url, '_blank');
   };
 
   return (

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -17,6 +17,7 @@ import {
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import UnitsSection from '../features/project-units/components/UnitsSection';
+import ProjectMasterPlanView from '../features/project-units/components/ProjectMasterPlanView';
 import AuthGate from '../components/auth/AuthGate';
 import { useAuth } from '../contexts/AuthContext';
 import Footer from '../components/layout/Footer';
@@ -29,9 +30,23 @@ import { useProjectDetail } from '../features/project-units/hooks/useProjectDeta
 export const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const projectId = Number(id);
 
-  const [activeTab, setActiveTab] = useState(4); // Tab "Quỹ căn" index 4
+  const tabQuery = searchParams.get('tab');
+  const unitIdQuery = searchParams.get('unitId');
+  const unitCodeQuery = searchParams.get('unitCode');
+
+  // Khởi tạo tab từ query param ?tab=3 hoặc mặc định là 4 (Quỹ căn)
+  const initialTab = tabQuery != null ? Number(tabQuery) : 4;
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    if (tabQuery != null) {
+      setActiveTab(Number(tabQuery));
+    }
+  }, [tabQuery]);
+
   const { user, isAuthenticated, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -155,16 +170,36 @@ export const ProjectDetailPage: React.FC = () => {
           />
 
           {/* Tabs Bar chuẩn Figma */}
-          <ProjectTabsBar activeTab={activeTab} onTabChange={setActiveTab} />
+          <ProjectTabsBar
+            activeTab={activeTab}
+            onTabChange={(tabId) => {
+              setActiveTab(tabId);
+              // Cập nhật URL param
+              setSearchParams({ tab: String(tabId) });
+            }}
+          />
 
-          {/* Tab contents - Thêm key={projectId} để reset toàn bộ state khi đổi dự án */}
+          {/* Tab 3: Mặt bằng quỹ căn */}
+          {activeTab === 3 && (
+            <ProjectMasterPlanView
+              projectId={projectId}
+              highlightedUnitId={unitIdQuery ? Number(unitIdQuery) : undefined}
+              highlightedUnitCode={unitCodeQuery || undefined}
+              onBackToUnitsTab={() => {
+                setActiveTab(4);
+                setSearchParams({ tab: '4' });
+              }}
+            />
+          )}
+
+          {/* Tab 4: Quỹ căn - Thêm key={projectId} để reset toàn bộ state khi đổi dự án */}
           {activeTab === 4 && (
             <AuthGate>
               <UnitsSection key={projectId} projectId={projectId} />
             </AuthGate>
           )}
 
-          {activeTab !== 4 && (
+          {activeTab !== 3 && activeTab !== 4 && (
             <Box sx={{ py: 8, textAlign: 'center' }}>
               <Typography color="text.secondary">Nội dung tab đang được cập nhật...</Typography>
             </Box>
