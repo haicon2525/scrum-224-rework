@@ -24,7 +24,7 @@ export const App: React.FC = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/projects/:id" element={<ProjectDetailPage />} />
-              <Route path="*" element={<Navigate to="/projects/1" replace />} />
+              <Route path="*" element={<Navigate to="/projects/65" replace />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

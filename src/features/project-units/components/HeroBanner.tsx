@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -6,7 +6,7 @@ import {
   Link,
   Button,
   Stack,
-  CircularProgress,
+  Skeleton,
 } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -23,7 +23,7 @@ export interface HeroBannerProps {
 }
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({
-  projectName = 'VINHOMES OCEAN PARK 3',
+  projectName = '',
   projectDescription,
   bannerUrl,
   loading = false,
@@ -33,9 +33,15 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 }) => {
   const [imageError, setImageError] = useState(false);
 
+  useEffect(() => {
+    setImageError(false);
+  }, [bannerUrl]);
+
   const displayDesc =
     projectDescription ||
-    `Theo dõi thông tin chi tiết và bảng giá, mặt bằng, tiến độ và chính sách bán hàng dự án ${projectName}.`;
+    (projectName
+      ? `Theo dõi thông tin chi tiết và bảng giá, mặt bằng, tiến độ và chính sách bán hàng dự án ${projectName}.`
+      : '');
 
   const effectiveBanner = bannerUrl || '/figma-banner.png';
 
@@ -61,9 +67,13 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               <Link underline="hover" color="primary" href="#projects">
                 Dự án
               </Link>
-              <Typography sx={{ color: 'text.secondary', fontSize: '0.8125rem', fontWeight: 600 }}>
-                {projectName}
-              </Typography>
+              {loading ? (
+                <Skeleton variant="text" width={140} height={20} sx={{ borderRadius: 1 }} />
+              ) : (
+                <Typography sx={{ color: 'text.secondary', fontSize: '0.8125rem', fontWeight: 600 }}>
+                  {projectName}
+                </Typography>
+              )}
             </Breadcrumbs>
           )}
           <Box>{projectSelectSlot}</Box>
@@ -79,9 +89,13 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           <Link underline="hover" color="primary" href="#projects">
             Dự án
           </Link>
-          <Typography sx={{ color: 'text.secondary', fontSize: '0.8125rem', fontWeight: 600 }}>
-            {projectName}
-          </Typography>
+          {loading ? (
+            <Skeleton variant="text" width={140} height={20} sx={{ borderRadius: 1 }} />
+          ) : (
+            <Typography sx={{ color: 'text.secondary', fontSize: '0.8125rem', fontWeight: 600 }}>
+              {projectName}
+            </Typography>
+          )}
         </Breadcrumbs>
       )}
 
@@ -96,23 +110,35 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         }}
       >
         <Box sx={{ maxWidth: { xs: '100%', md: '80%' } }}>
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 800,
-              color: colors.deepBlue || 'primary.main',
-              fontSize: { xs: '1.35rem', md: '1.6rem' },
-              letterSpacing: '-0.3px',
-            }}
-          >
-            {projectName.toUpperCase()}
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: 'text.secondary', fontSize: '0.82rem', mt: 0.5, lineHeight: 1.5 }}
-          >
-            {displayDesc}
-          </Typography>
+          {loading ? (
+            <>
+              <Skeleton variant="text" width="60%" height={38} sx={{ mb: 0.5, borderRadius: 1 }} />
+              <Skeleton variant="text" width="90%" height={20} sx={{ borderRadius: 1 }} />
+              <Skeleton variant="text" width="50%" height={20} sx={{ borderRadius: 1 }} />
+            </>
+          ) : (
+            <>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 800,
+                  color: colors.deepBlue || 'primary.main',
+                  fontSize: { xs: '1.35rem', md: '1.6rem' },
+                  letterSpacing: '-0.3px',
+                }}
+              >
+                {projectName?.toUpperCase()}
+              </Typography>
+              {displayDesc && (
+                <Typography
+                  variant="body2"
+                  sx={{ color: 'text.secondary', fontSize: '0.82rem', mt: 0.5, lineHeight: 1.5 }}
+                >
+                  {displayDesc}
+                </Typography>
+              )}
+            </>
+          )}
         </Box>
 
         {/* Share Button */}
@@ -152,9 +178,15 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
         }}
       >
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 10 }}>
-            <CircularProgress size={36} />
-          </Box>
+          <Skeleton
+            variant="rectangular"
+            animation="wave"
+            sx={{
+              width: '100%',
+              height: { xs: 200, sm: 260, md: 320 },
+              borderRadius: { xs: 3, md: 4 },
+            }}
+          />
         ) : !imageError ? (
           <Box
             component="img"
@@ -195,18 +227,20 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               >
                 Dự án bất động sản cao cấp
               </Typography>
-              <Typography
-                variant="h3"
-                sx={{
-                  fontWeight: 900,
-                  letterSpacing: 1.5,
-                  textShadow: '0 3px 8px rgba(0,0,0,0.4)',
-                  mt: 0.5,
-                  fontSize: { xs: '1.5rem', sm: '2.2rem', md: '2.8rem' },
-                }}
-              >
-                {projectName.toUpperCase()}
-              </Typography>
+              {projectName && (
+                <Typography
+                  variant="h3"
+                  sx={{
+                    fontWeight: 900,
+                    letterSpacing: 1.5,
+                    textShadow: '0 3px 8px rgba(0,0,0,0.4)',
+                    mt: 0.5,
+                    fontSize: { xs: '1.5rem', sm: '2.2rem', md: '2.8rem' },
+                  }}
+                >
+                  {projectName.toUpperCase()}
+                </Typography>
+              )}
             </Box>
           </Box>
         )}

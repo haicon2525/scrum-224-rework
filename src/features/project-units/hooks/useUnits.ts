@@ -13,6 +13,11 @@ export const useUnits = (params: UnitQueryParams) => {
     queryKey: ['units', apiParams],
     queryFn: () => unitApi.getUnits(apiParams),
     enabled: Boolean(params.projectId),
+    // Giữ dữ liệu cũ khi đổi trang/lọc trong cùng dự án; xóa dữ liệu cũ khi đổi projectId
+    placeholderData: (prev, prevQuery) => {
+      const prevParams = prevQuery?.queryKey?.[1] as UnitQueryParams | undefined;
+      return prevParams?.projectId === params.projectId ? prev : undefined;
+    },
   });
 };
 

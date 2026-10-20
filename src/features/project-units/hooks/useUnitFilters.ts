@@ -1,8 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { UnitQueryParams } from '../types';
 
 export const useUnitFilters = (initialFilters: UnitQueryParams) => {
   const [filters, setFilters] = useState<UnitQueryParams>(initialFilters);
+
+  // Khi projectId thay đổi, reset filters về initialFilters (page 1, xóa filter cũ)
+  useEffect(() => {
+    setFilters(initialFilters);
+  }, [initialFilters.projectId]);
 
   const updateFilter = useCallback(
     <K extends keyof UnitQueryParams>(key: K, value: UnitQueryParams[K]) => {

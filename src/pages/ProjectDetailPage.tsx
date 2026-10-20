@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
   Box,
   Typography,
-  Breadcrumbs,
   Link,
   Button,
   AppBar,
@@ -13,10 +12,10 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  CircularProgress,
+  Paper,
 } from '@mui/material';
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import UnitsSection from '../features/project-units/components/UnitsSection';
 import AuthGate from '../components/auth/AuthGate';
 import { useAuth } from '../contexts/AuthContext';
@@ -25,81 +24,27 @@ import ProjectTabsBar from '../components/layout/ProjectTabsBar';
 import HeroBanner from '../features/project-units/components/HeroBanner';
 import RealEstateLogo from '../components/common/RealEstateLogo';
 import { colors } from '@/theme';
-import httpClient from '@/lib/httpClient';
-
-export interface ProjectItem {
-  id: number;
-  code: string;
-  name: string;
-  address?: string;
-  shortDescription?: string;
-  fileInfo?: {
-    id: number;
-    fullLink?: string;
-    originalName?: string;
-  } | null;
-}
+import { useProjectDetail } from '../features/project-units/hooks/useProjectDetail';
 
 export const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const rawId = Number(id);
-
-  const [projects, setProjects] = useState<ProjectItem[]>([]);
-  const [currentProject, setCurrentProject] = useState<ProjectItem | null>(null);
-  const [loadingProject, setLoadingProject] = useState<boolean>(true);
+  const projectId = Number(id);
 
   const [activeTab, setActiveTab] = useState(4); // Tab "Quỹ căn" index 4
   const { user, isAuthenticated, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  // 1. Tải danh sách dự án để chọn và lấy thông tin chi tiết
-  useEffect(() => {
-    let isMounted = true;
+  // Gọi hook useProjectDetail(projectId) từ API GET /portal/projects/detail?id=
+  const {
+    data: projectResponse,
+    isLoading: loadingProject,
+    isError,
+    error,
+  } = useProjectDetail(projectId);
 
-    const fetchProjects = async () => {
-      try {
-        setLoadingProject(true);
-        const res = await httpClient.get('/portal/projects/search', {
-          params: { pageNumber: 0, pageSize: 50 },
-        });
-
-        const list: ProjectItem[] = res.data?.data || res.data || [];
-        if (!isMounted) return;
-        setProjects(list);
-
-        if (list.length > 0) {
-          // Tìm dự án theo ID trên URL, nếu không thấy thì ưu tiên Ocean Park 2 & 3 hoặc lấy dự án đầu tiên
-          let found = list.find((p) => p.id === rawId);
-          if (!found) {
-            found =
-              list.find(
-                (p) =>
-                  p.name.toLowerCase().includes('ocean park 2 & 3') ||
-                  p.name.toLowerCase().includes('ocean park 3')
-              ) || list[0];
-          }
-
-          setCurrentProject(found);
-
-          // Nếu URL ID khác ID thực tế tìm được, cập nhật lại URL
-          if (found && found.id !== rawId) {
-            navigate(`/projects/${found.id}`, { replace: true });
-          }
-        }
-      } catch (err) {
-        console.error('Lỗi khi tải dự án:', err);
-      } finally {
-        if (isMounted) setLoadingProject(false);
-      }
-    };
-
-    fetchProjects();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [rawId, navigate]);
+  const project = projectResponse?.data;
+  const isNotFound = isError && (error as any)?.response?.status === 404;
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -109,12 +54,9 @@ export const ProjectDetailPage: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const projectName = currentProject?.name || 'VINHOMES OCEAN PARK 3';
-  const projectDesc =
-    currentProject?.shortDescription ||
-    `Theo dõi thông tin chi tiết và bảng giá, mặt bằng, tiến độ và chính sách bán hàng dự án ${projectName}.`;
-  const bannerImgUrl = currentProject?.fileInfo?.fullLink;
-  const currentProjectId = currentProject?.id || rawId || 65;
+  const projectName = project?.name || '';
+  const projectDesc = project?.shortDescription || '';
+  const bannerImgUrl = project?.fileInfo?.fullLink;
 
   return (
     <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -176,31 +118,59 @@ export const ProjectDetailPage: React.FC = () => {
       </AppBar>
 
       {/* Main Body */}
-      <Container maxWidth="xl" sx={{ pt: 2.5, flex: 1 }}>
-        {/* Hero Banner Component */}
-        <HeroBanner
-          projectName={projectName}
-          projectDescription={projectDesc}
-          bannerUrl={bannerImgUrl}
-          loading={loadingProject}
-        />
+      {isNotFound ? (
+        <Container maxWidth="sm" sx={{ py: 12, textAlign: 'center', flex: 1 }}>
+          <Paper elevation={0} sx={{ p: 5, borderRadius: 3, border: '1px solid #e2e8f0', bgcolor: '#f8fafc' }}>
+            <ErrorOutlineIcon sx={{ fontSize: 60, color: '#94a3b8', mb: 2 }} />
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#1e293b', mb: 1.5 }}>
+              Không tìm thấy dự án
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#64748b', mb: 3 }}>
+              Dự án với mã ID {id} không tồn tại hoặc đã bị gỡ bỏ.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => navigate('/projects/65')}
+              sx={{
+                borderRadius: 2,
+                px: 3,
+                py: 1,
+                textTransform: 'none',
+                fontWeight: 600,
+                background: 'linear-gradient(90deg, #1d4ed8 0%, #0284c7 100%)',
+              }}
+            >
+              Về dự án 65
+            </Button>
+          </Paper>
+        </Container>
+      ) : (
+        <Container maxWidth="xl" sx={{ pt: 2.5, flex: 1 }}>
+          {/* Hero Banner Component: hiển thị Skeleton khi loading */}
+          <HeroBanner
+            projectName={projectName}
+            projectDescription={projectDesc}
+            bannerUrl={bannerImgUrl}
+            loading={loadingProject}
+          />
 
-        {/* Tabs Bar chuẩn Figma */}
-        <ProjectTabsBar activeTab={activeTab} onTabChange={setActiveTab} />
+          {/* Tabs Bar chuẩn Figma */}
+          <ProjectTabsBar activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Tab contents */}
-        {activeTab === 4 && (
-          <AuthGate>
-            <UnitsSection projectId={currentProjectId} />
-          </AuthGate>
-        )}
+          {/* Tab contents - Thêm key={projectId} để reset toàn bộ state khi đổi dự án */}
+          {activeTab === 4 && (
+            <AuthGate>
+              <UnitsSection key={projectId} projectId={projectId} />
+            </AuthGate>
+          )}
 
-        {activeTab !== 4 && (
-          <Box sx={{ py: 8, textAlign: 'center' }}>
-            <Typography color="text.secondary">Nội dung tab đang được cập nhật...</Typography>
-          </Box>
-        )}
-      </Container>
+          {activeTab !== 4 && (
+            <Box sx={{ py: 8, textAlign: 'center' }}>
+              <Typography color="text.secondary">Nội dung tab đang được cập nhật...</Typography>
+            </Box>
+          )}
+        </Container>
+      )}
 
       {/* Footer chuẩn Figma */}
       <Footer />
