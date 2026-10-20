@@ -16,7 +16,7 @@ interface UnitsSectionProps {
 export const UnitsSection: React.FC<UnitsSectionProps> = ({ projectId }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const { filters, updateFilter, updateMultipleFilters } = useUnitFilters({
+  const { filters, updateFilter, updateMultipleFilters, resetFilters } = useUnitFilters({
     projectId,
     pageNumber: 1,
     pageSize: DEFAULT_PAGE_SIZE,
@@ -62,6 +62,7 @@ export const UnitsSection: React.FC<UnitsSectionProps> = ({ projectId }) => {
           onApply={(newFilters) => {
             updateMultipleFilters(newFilters);
           }}
+          onReset={resetFilters}
           onClose={() => setShowAdvanced(false)}
         />
       )}
