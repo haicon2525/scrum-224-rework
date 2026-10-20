@@ -128,10 +128,20 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
         BỘ LỌC NÂNG CAO
       </Typography>
 
-      {/* 2 hàng ô lọc chuẩn Frame 197 (3 cột mỗi hàng trên desktop) */}
-      <Grid container spacing={2.5}>
-        {/* HÀNG 1: Ô 1 - Mã căn hộ */}
-        <Grid item xs={12} sm={6} md={4}>
+      {/* 6 ô lọc trên 1 hàng ngang chuẩn Figma */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(6, 1fr)',
+          },
+          gap: 1.75,
+        }}
+      >
+        {/* Ô 1 - Mã căn hộ */}
+        <Box sx={{ minWidth: 0 }}>
           <Typography sx={labelStyle}>Mã căn hộ</Typography>
           <TextField
             fullWidth
@@ -143,10 +153,10 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               sx: inputControlStyle,
             }}
           />
-        </Grid>
+        </Box>
 
-        {/* HÀNG 1: Ô 2 - Phân khu */}
-        <Grid item xs={12} sm={6} md={4}>
+        {/* Ô 2 - Phân khu */}
+        <Box sx={{ minWidth: 0 }}>
           <Typography sx={labelStyle}>Phân khu</Typography>
           <FormControl fullWidth size="small">
             <Select
@@ -170,10 +180,10 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               ))}
             </Select>
           </FormControl>
-        </Grid>
+        </Box>
 
-        {/* HÀNG 1: Ô 3 - Loại căn */}
-        <Grid item xs={12} sm={6} md={4}>
+        {/* Ô 3 - Loại căn */}
+        <Box sx={{ minWidth: 0 }}>
           <Typography sx={labelStyle}>Loại căn</Typography>
           <FormControl fullWidth size="small">
             <Select
@@ -197,10 +207,10 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               ))}
             </Select>
           </FormControl>
-        </Grid>
+        </Box>
 
-        {/* HÀNG 2: Ô 4 - Hướng đất */}
-        <Grid item xs={12} sm={6} md={4}>
+        {/* Ô 4 - Hướng đất */}
+        <Box sx={{ minWidth: 0 }}>
           <Typography sx={labelStyle}>Hướng đất</Typography>
           <FormControl fullWidth size="small">
             <Select
@@ -224,10 +234,10 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               ))}
             </Select>
           </FormControl>
-        </Grid>
+        </Box>
 
-        {/* HÀNG 2: Ô 5 - Diện tích (Popover chuẩn hình 3) */}
-        <Grid item xs={12} sm={6} md={4}>
+        {/* Ô 5 - Diện tích (Popover chuẩn hình 3) */}
+        <Box sx={{ minWidth: 0 }}>
           <Typography sx={labelStyle}>Diện tích</Typography>
           <AreaRangeFilter
             minArea={localMinArea}
@@ -237,10 +247,10 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               setLocalMaxArea(max);
             }}
           />
-        </Grid>
+        </Box>
 
-        {/* HÀNG 2: Ô 6 - Khoảng giá (Popover chuẩn hình 2) */}
-        <Grid item xs={12} sm={6} md={4}>
+        {/* Ô 6 - Khoảng giá (Popover chuẩn hình 2) */}
+        <Box sx={{ minWidth: 0 }}>
           <Typography sx={labelStyle}>Khoảng giá</Typography>
           <PriceRangeFilter
             minPrice={localMinPrice}
@@ -250,8 +260,8 @@ export const AdvancedFilter: React.FC<AdvancedFilterProps> = ({
               setLocalMaxPrice(max);
             }}
           />
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       {/* Nút "Đóng" và "Tìm kiếm" CĂN GIỮA chuẩn Figma hình 1, 2, 3 */}
       <Box
