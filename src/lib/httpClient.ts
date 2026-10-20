@@ -10,9 +10,13 @@ export const httpClient = axios.create({
 
 httpClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Không gắn token cũ nếu đang gọi endpoint đăng nhập hoặc đăng ký
+    const isAuthEndpoint = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
+    if (!isAuthEndpoint) {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

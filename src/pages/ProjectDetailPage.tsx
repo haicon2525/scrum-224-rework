@@ -17,11 +17,13 @@ import {
   MenuItem,
 } from '@mui/material';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-import DomainIcon from '@mui/icons-material/Domain';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import UnitsSection from '../features/project-units/components/UnitsSection';
 import AuthGate from '../components/auth/AuthGate';
 import { useAuth } from '../contexts/AuthContext';
+import Footer from '../components/layout/Footer';
+import ProjectTabsBar from '../components/layout/ProjectTabsBar';
+import RealEstateLogo from '../components/common/RealEstateLogo';
 import { colors } from '@/theme';
 
 export const ProjectDetailPage: React.FC = () => {
@@ -51,7 +53,7 @@ export const ProjectDetailPage: React.FC = () => {
           <Toolbar disableGutters sx={{ justifyContent: 'space-between', minHeight: 64 }}>
             {/* Logo */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <DomainIcon sx={{ color: colors.primary, fontSize: 32 }} />
+              <RealEstateLogo color={colors.primary} size={34} />
             </Box>
 
             {/* Nav Links */}
@@ -178,47 +180,8 @@ export const ProjectDetailPage: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Tabs Bar matching Figma */}
-        <Box
-          sx={{
-            mb: 3,
-            bgcolor: colors.primary,
-            borderRadius: '10px',
-            px: 1,
-          }}
-        >
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            variant="scrollable"
-            scrollButtons="auto"
-            sx={{
-              '& .MuiTab-root': {
-                color: 'rgba(255,255,255,0.85)',
-                fontWeight: 600,
-                fontSize: '0.875rem',
-                textTransform: 'none',
-                minHeight: 48,
-                '&.Mui-selected': {
-                  color: '#ffffff',
-                  bgcolor: 'rgba(255,255,255,0.18)',
-                  borderRadius: '6px',
-                },
-              },
-              '& .MuiTabs-indicator': {
-                display: 'none',
-              },
-            }}
-          >
-            <Tab label="Tổng quan" />
-            <Tab label="Vị trí" />
-            <Tab label="Phân khu" />
-            <Tab label="Mặt bằng quỹ căn" />
-            <Tab label="Quỹ căn" />
-            <Tab label="Chính sách bán hàng" />
-            <Tab label="Tin tức" />
-          </Tabs>
-        </Box>
+        {/* Tabs Bar chuẩn Figma */}
+        <ProjectTabsBar activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Tab contents */}
         {activeTab === 4 && (
@@ -234,48 +197,8 @@ export const ProjectDetailPage: React.FC = () => {
         )}
       </Container>
 
-      {/* Footer matching Figma */}
-      <Box sx={{ bgcolor: '#0284c7', color: '#ffffff', mt: 8, py: 4 }}>
-        <Container maxWidth="xl">
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 4 }}>
-            <Box sx={{ maxWidth: 360 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <DomainIcon sx={{ fontSize: 32 }} />
-              </Box>
-              <Typography variant="body2" sx={{ opacity: 0.9, lineHeight: 1.6 }}>
-                Nền tảng công nghệ tiên phong & dẫn đầu lĩnh vực kinh doanh bất động sản tại Việt Nam
-              </Typography>
-              <Typography variant="caption" sx={{ display: 'block', mt: 2, opacity: 0.8 }}>
-                Hotline: 0972 72 9999
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>
-                Danh mục
-              </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.85, mb: 0.5 }}>• Giới thiệu</Typography>
-              <Typography variant="body2" sx={{ opacity: 0.85, mb: 0.5 }}>• Dự án</Typography>
-              <Typography variant="body2" sx={{ opacity: 0.85 }}>• Liên hệ</Typography>
-            </Box>
-
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>
-                Kết nối
-              </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.85 }}>
-                Facebook • Youtube • Instagram • Tiktok
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box sx={{ borderTop: '1px solid rgba(255,255,255,0.15)', mt: 3, pt: 2, textAlign: 'center' }}>
-            <Typography variant="caption" sx={{ opacity: 0.75 }}>
-              © 2026 - Realestate. All rights reserved.
-            </Typography>
-          </Box>
-        </Container>
-      </Box>
+      {/* Footer chuẩn Figma */}
+      <Footer />
     </Box>
   );
 };

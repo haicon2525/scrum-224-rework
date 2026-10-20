@@ -16,6 +16,10 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, "/hovixi/api/v1"),
+        headers: {
+          Origin: "https://api-uat.vinhomes.biz.vn",
+          Referer: "https://api-uat.vinhomes.biz.vn/",
+        },
       },
     },
   },

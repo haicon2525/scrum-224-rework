@@ -36,7 +36,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!username.trim() || !password) {
+    const sanitizedUsername = username.trim().toLowerCase();
+    const sanitizedPassword = password.trim();
+
+    if (!sanitizedUsername || !sanitizedPassword) {
       setErrorMessage('Vui lòng nhập email/số điện thoại và mật khẩu');
       return;
     }
@@ -44,12 +47,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     try {
       setIsLoading(true);
       const res = await authApi.login({
-        username: username.trim(),
-        password,
+        username: sanitizedUsername,
+        password: sanitizedPassword,
       });
 
       if (res.data?.accessToken) {
-        login(res.data, username.trim(), autoLogin);
+        login(res.data, sanitizedUsername, autoLogin);
         onSuccess?.();
       } else {
         setErrorMessage(res.message || 'Đăng nhập không thành công');
