@@ -1,24 +1,7 @@
 import httpClient from '@/lib/httpClient';
+import { LoginPayload, LoginResponse, TokenResponse } from '@/types';
 
-export interface LoginPayload {
-  username: string;
-  password: string;
-}
-
-export interface TokenResponse {
-  accessToken: string;
-  refreshToken: string;
-  accessExpiredAt?: string;
-  refreshExpiredAt?: string;
-  accessExpiresIn?: number;
-  refreshExpiresIn?: number;
-}
-
-export interface LoginResponse {
-  code: string;
-  message: string;
-  data: TokenResponse;
-}
+export type { LoginPayload, LoginResponse, TokenResponse };
 
 export const authApi = {
   login: async (payload: LoginPayload): Promise<LoginResponse> => {

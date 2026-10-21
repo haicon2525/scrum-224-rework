@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { TokenResponse } from '@/api/authApi';
+import { TokenResponse, User } from '@/types';
 
-export interface User {
-  username: string;
-  name?: string;
-}
+export type { User };
 
 interface AuthContextType {
   user: User | null;
