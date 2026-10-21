@@ -222,7 +222,7 @@ export const ProjectDetailPage: React.FC = () => {
           </Paper>
         </Container>
       ) : (
-        <Container maxWidth="xl" sx={{ pt: { xs: 1.5, sm: 2.5 }, px: { xs: 1.5, sm: 2.5, md: 3 }, flex: 1 }}>
+        <Container maxWidth="xl" sx={{ pt: { xs: 1.5, sm: 2.5 }, flex: 1 }}>
           {/* Hero Banner Component: hiển thị Skeleton khi loading */}
           <HeroBanner
             projectName={projectName}

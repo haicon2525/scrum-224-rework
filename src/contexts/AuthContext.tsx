@@ -45,9 +45,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       logout();
     };
 
+    const handleTokenRefreshed = (event: Event) => {
+      const customEvent = event as CustomEvent<{ accessToken: string }>;
+      if (customEvent.detail?.accessToken) {
+        setToken(customEvent.detail.accessToken);
+      }
+    };
+
     window.addEventListener('auth:unauthorized', handleUnauthorized);
+    window.addEventListener('auth:token-refreshed', handleTokenRefreshed);
     return () => {
       window.removeEventListener('auth:unauthorized', handleUnauthorized);
+      window.removeEventListener('auth:token-refreshed', handleTokenRefreshed);
     };
   }, []);
 
