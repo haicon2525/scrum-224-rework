@@ -73,19 +73,21 @@ export const ProjectDetailPage: React.FC = () => {
   const projectDesc = project?.shortDescription || '';
   const bannerImgUrl = project?.fileInfo?.fullLink;
 
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
   return (
     <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* 1. Header Navigation Bar */}
       <AppBar position="static" elevation={0} sx={{ bgcolor: '#ffffff', borderBottom: '1px solid #f1f5f9' }}>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between', minHeight: 64 }}>
+        <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3 } }}>
+          <Toolbar disableGutters sx={{ justifyContent: 'space-between', minHeight: { xs: 56, sm: 64 } }}>
             {/* Logo */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <RealEstateLogo color={colors.primary} size={34} />
+              <RealEstateLogo color={colors.primary} size={32} />
             </Box>
 
-            {/* Nav Links */}
-            <Box sx={{ display: 'flex', gap: 4 }}>
+            {/* Nav Links (Desktop only) */}
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 4 }}>
               <Link href="#" underline="none" sx={{ color: '#475569', fontWeight: 600, fontSize: '0.875rem' }}>
                 GIỚI THIỆU
               </Link>
@@ -94,43 +96,103 @@ export const ProjectDetailPage: React.FC = () => {
               </Link>
             </Box>
 
-            {/* Online Status & User Profile */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Online Status & User Profile / Mobile Hamburger */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2 } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                 <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981' }} />
-                <Typography sx={{ fontSize: '0.8125rem', color: '#64748b' }}>
+                <Typography sx={{ fontSize: { xs: '0.75rem', sm: '0.8125rem' }, color: '#64748b', whiteSpace: 'nowrap' }}>
                   100 người đang Online
                 </Typography>
               </Box>
 
-              {isAuthenticated ? (
-                <>
-                  <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 1 }}>
-                    <Avatar sx={{ width: 34, height: 34, bgcolor: colors.primary, fontSize: '0.875rem' }}>
-                      {user?.username?.charAt(0).toUpperCase() || 'U'}
-                    </Avatar>
+              {/* User Profile on Desktop */}
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                {isAuthenticated ? (
+                  <>
+                    <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 1 }}>
+                      <Avatar sx={{ width: 34, height: 34, bgcolor: colors.primary, fontSize: '0.875rem' }}>
+                        {user?.username?.charAt(0).toUpperCase() || 'U'}
+                      </Avatar>
+                    </IconButton>
+                    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                      <MenuItem disabled>{user?.username}</MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleMenuClose();
+                          logout();
+                        }}
+                      >
+                        Đăng xuất
+                      </MenuItem>
+                    </Menu>
+                  </>
+                ) : (
+                  <IconButton size="small" sx={{ bgcolor: '#f1f5f9', color: colors.primary }}>
+                    <PersonOutlineIcon fontSize="small" />
                   </IconButton>
-                  <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                    <MenuItem disabled>{user?.username}</MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        handleMenuClose();
-                        logout();
-                      }}
-                    >
-                      Đăng xuất
-                    </MenuItem>
-                  </Menu>
-                </>
-              ) : (
-                <IconButton size="small" sx={{ bgcolor: '#f1f5f9', color: colors.primary }}>
-                  <PersonOutlineIcon fontSize="small" />
-                </IconButton>
-              )}
+                )}
+              </Box>
+
+              {/* Hamburger Menu on Mobile */}
+              <IconButton
+                onClick={() => setMobileDrawerOpen(true)}
+                size="small"
+                sx={{
+                  display: { xs: 'inline-flex', md: 'none' },
+                  color: colors.primary,
+                  p: 0.75,
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              </IconButton>
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
+
+      {/* Mobile Drawer Menu */}
+      <Menu
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={mobileDrawerOpen}
+        onClose={() => setMobileDrawerOpen(false)}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiPaper-root': {
+            width: 220,
+            mt: 6,
+            borderRadius: 2,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+          },
+        }}
+      >
+        <MenuItem onClick={() => setMobileDrawerOpen(false)} sx={{ fontWeight: 600, color: '#475569' }}>
+          GIỚI THIỆU
+        </MenuItem>
+        <MenuItem onClick={() => setMobileDrawerOpen(false)} sx={{ fontWeight: 700, color: colors.primary }}>
+          DỰ ÁN
+        </MenuItem>
+        {isAuthenticated ? (
+          <>
+            <MenuItem disabled sx={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+              Tài khoản: {user?.username}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setMobileDrawerOpen(false);
+                logout();
+              }}
+              sx={{ color: '#ef4444', fontWeight: 600 }}
+            >
+              Đăng xuất
+            </MenuItem>
+          </>
+        ) : null}
+      </Menu>
 
       {/* Main Body */}
       {isNotFound ? (
@@ -160,7 +222,7 @@ export const ProjectDetailPage: React.FC = () => {
           </Paper>
         </Container>
       ) : (
-        <Container maxWidth="xl" sx={{ pt: 2.5, flex: 1 }}>
+        <Container maxWidth="xl" sx={{ pt: { xs: 1.5, sm: 2.5 }, px: { xs: 1.5, sm: 2.5, md: 3 }, flex: 1 }}>
           {/* Hero Banner Component: hiển thị Skeleton khi loading */}
           <HeroBanner
             projectName={projectName}

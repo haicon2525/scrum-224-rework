@@ -381,17 +381,21 @@ export const UnitDetailModal: React.FC<UnitDetailModalProps> = ({
       {/* 3. Footer Modal */}
       <DialogActions
         sx={{
-          px: 3,
+          px: { xs: 2, sm: 3 },
           py: 2,
           borderTop: `1px solid ${colors.borderLight}`,
           bgcolor: '#fafafa',
           justifyContent: 'space-between',
+          flexDirection: { xs: 'column-reverse', sm: 'row' },
+          gap: { xs: 1.5, sm: 0 },
+          alignItems: { xs: 'stretch', sm: 'center' },
         }}
       >
         <Button
           startIcon={<LocationOnIcon sx={{ color: `${colors.locationPin} !important` }} />}
           onClick={() => {
             onLocationClick?.(unit);
+            onClose();
           }}
           sx={{
             color: colors.locationPin,

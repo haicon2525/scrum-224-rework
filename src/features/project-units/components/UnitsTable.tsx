@@ -97,33 +97,42 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
           bgcolor: '#ffffff',
         }}
       >
-        <Table sx={{ minWidth: 960 }}>
+        <Table sx={{ minWidth: { xs: 0, md: 960 }, width: '100%' }}>
           <TableHead>
             <TableRow sx={{ bgcolor: '#ffffff', borderBottom: `1px solid ${colors.border}` }}>
-              <TableCell sx={{ width: 75, py: 1.75 }} align="center"></TableCell>
-              <TableCell sx={{ width: 110, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+              <TableCell sx={{ width: { xs: 50, md: 75 }, py: 1.75, px: { xs: 0.5, md: 1 } }} align="center"></TableCell>
+              <TableCell sx={{ width: { xs: 120, md: 110 }, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                 Mã căn
               </TableCell>
-              <TableCell sx={{ width: 110, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+              <TableCell
+                sx={{
+                  width: { xs: 'auto', md: 110 },
+                  fontWeight: 600,
+                  color: colors.tableHeader,
+                  fontSize: '0.875rem',
+                  textAlign: { xs: 'right', md: 'left' },
+                  pr: { xs: 2, md: 2 },
+                }}
+              >
                 Giá bán
               </TableCell>
-              <TableCell sx={{ width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                 Loại hình
               </TableCell>
-              <TableCell sx={{ width: 110, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 110, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                 DT đất
               </TableCell>
-              <TableCell sx={{ width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                 DT xây dựng
               </TableCell>
-              <TableCell sx={{ width: 120, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 120, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                 Hướng
               </TableCell>
-              <TableCell sx={{ width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                 Phân khu
               </TableCell>
               <TableCell
-                sx={{ width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}
+                sx={{ display: { xs: 'none', md: 'table-cell' }, width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}
                 align="center"
               >
                 Tình trạng
@@ -161,7 +170,7 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
                   }}
                 >
                   {/* Cột 1: Icon Hot + Vị trí */}
-                  <TableCell align="center" sx={{ py: 1.5, px: 1 }}>
+                  <TableCell align="center" sx={{ py: 1.5, px: { xs: 0.5, md: 1 }, width: { xs: 50, md: 75 } }}>
                     <UnitActionIcons
                       isHot={unit.isHot}
                       onLocationClick={() => onLocationClick?.(unit)}
@@ -169,7 +178,7 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
                   </TableCell>
 
                   {/* Cột 2: Mã căn (Badge bấm để xem chi tiết) */}
-                  <TableCell sx={{ py: 1.5 }}>
+                  <TableCell sx={{ py: 1.5, px: { xs: 1, md: 2 } }}>
                     <Chip
                       label={unit.unitCode}
                       size="small"
@@ -194,31 +203,40 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
                   </TableCell>
 
                   {/* Cột 3: Giá bán (xx,xx tỷ) */}
-                  <TableCell sx={{ fontWeight: 500, color: colors.textPrimary, fontSize: '0.875rem' }}>
+                  <TableCell
+                    sx={{
+                      fontWeight: 500,
+                      color: colors.textPrimary,
+                      fontSize: '0.875rem',
+                      textAlign: { xs: 'right', md: 'left' },
+                      pr: { xs: 2, md: 2 },
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {formatPriceBillion(unit.basePrice)}
                   </TableCell>
 
                   {/* Cột 4: Loại hình */}
-                  <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>{unitTypeLabel}</TableCell>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>{unitTypeLabel}</TableCell>
 
                   {/* Cột 5: DT đất */}
-                  <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>
                     {unit.areaLand != null ? `${unit.areaLand}m²` : '-'}
                   </TableCell>
 
                   {/* Cột 6: DT xây dựng */}
-                  <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>
                     {unit.areaBuilding != null ? `${unit.areaBuilding}m²` : '-'}
                   </TableCell>
 
                   {/* Cột 7: Hướng */}
-                  <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>{directionLabel}</TableCell>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>{directionLabel}</TableCell>
 
                   {/* Cột 8: Phân khu */}
-                  <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>{phaseLabel}</TableCell>
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>{phaseLabel}</TableCell>
 
                   {/* Cột 9: Tình trạng */}
-                  <TableCell align="center">
+                  <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }} align="center">
                     <StatusChip statusCode={unit.statusCode} label={statusLabel} />
                   </TableCell>
                 </TableRow>
@@ -232,15 +250,58 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
       <Box
         sx={{
           display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'space-between',
           alignItems: 'center',
           mt: 2.5,
-          flexWrap: 'wrap',
           gap: 2,
         }}
       >
-        {/* Bên trái: Trang [ 1 v ] Của {safeTotalPages} */}
-        <Stack direction="row" spacing={1} alignItems="center">
+        {/* Nút phân trang (trên mobile đưa lên trước) */}
+        <Box
+          sx={{
+            order: { xs: 1, sm: 2 },
+            width: { xs: '100%', sm: 'auto' },
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <Pagination
+            count={safeTotalPages}
+            page={safePageNumber}
+            onChange={(_, val) => onPageChange?.(val)}
+            color="primary"
+            shape="rounded"
+            showFirstButton
+            showLastButton
+            siblingCount={0}
+            boundaryCount={1}
+            sx={{
+              '& .MuiPaginationItem-root': {
+                minWidth: { xs: 28, sm: 32 },
+                height: { xs: 28, sm: 32 },
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                padding: { xs: '0 4px', sm: '0 6px' },
+              },
+              '& .MuiPaginationItem-root.Mui-selected': {
+                bgcolor: colors.primary,
+                color: '#ffffff',
+              },
+            }}
+          />
+        </Box>
+
+        {/* Trang [ 1 v ] Của {safeTotalPages} (trên mobile đưa xuống dưới) */}
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          justifyContent="center"
+          sx={{
+            order: { xs: 2, sm: 1 },
+            width: { xs: '100%', sm: 'auto' },
+          }}
+        >
           <Typography variant="body2" color="text.secondary">
             Trang
           </Typography>
@@ -265,23 +326,6 @@ export const UnitsTable: React.FC<UnitsTableProps> = ({
             Của {safeTotalPages}
           </Typography>
         </Stack>
-
-        {/* Bên phải: Phân trang các nút */}
-        <Pagination
-          count={safeTotalPages}
-          page={safePageNumber}
-          onChange={(_, val) => onPageChange?.(val)}
-          color="primary"
-          shape="rounded"
-          showFirstButton
-          showLastButton
-          sx={{
-            '& .MuiPaginationItem-root.Mui-selected': {
-              bgcolor: colors.primary,
-              color: '#ffffff',
-            },
-          }}
-        />
       </Box>
     </Box>
   );

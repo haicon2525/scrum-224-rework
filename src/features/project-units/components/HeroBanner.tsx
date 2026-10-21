@@ -183,7 +183,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             animation="wave"
             sx={{
               width: '100%',
-              height: { xs: 200, sm: 260, md: 320 },
+              height: { xs: 160, sm: 220, md: 320 },
               borderRadius: { xs: 3, md: 4 },
             }}
           />
@@ -195,8 +195,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             onError={() => setImageError(true)}
             sx={{
               width: '100%',
+              maxHeight: { xs: 220, sm: 300, md: 400 },
               height: 'auto',
               display: 'block',
+              objectFit: 'cover',
               borderRadius: { xs: 3, md: 4 },
             }}
           />

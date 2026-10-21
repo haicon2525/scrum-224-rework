@@ -64,23 +64,37 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
         <Box
           sx={{
             display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: { xs: 'stretch', sm: 'center' },
             mb: 2,
+            gap: 2,
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 800, color: colors.deepBlue }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 800,
+              color: colors.deepBlue,
+              fontSize: { xs: '1.25rem', sm: '1.25rem' },
+            }}
+          >
             BẢNG HÀNG
           </Typography>
 
-          <Stack direction="row" spacing={1.5} alignItems="center">
-            <FormControl size="small" sx={{ minWidth: 180 }}>
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1.5}
+            alignItems="stretch"
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
+          >
+            <FormControl size="small" sx={{ width: { xs: '100%', sm: 180 } }}>
               <Select value="" displayEmpty sx={{ borderRadius: '8px', bgcolor: '#fff' }}>
                 <MenuItem value="">Sắp xếp theo mặc định</MenuItem>
               </Select>
             </FormControl>
 
-            <FormControl size="small" sx={{ minWidth: 160 }}>
+            <FormControl size="small" sx={{ width: { xs: '100%', sm: 160 } }}>
               <Select value="" displayEmpty sx={{ borderRadius: '8px', bgcolor: '#fff' }}>
                 <MenuItem value="">Tất cả trạng thái</MenuItem>
               </Select>
@@ -94,6 +108,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
                 textTransform: 'none',
                 fontWeight: 600,
                 bgcolor: colors.primary,
+                width: { xs: '100%', sm: 'auto' },
                 px: 2.5,
               }}
             >
@@ -112,33 +127,42 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
             overflow: 'hidden',
           }}
         >
-          <Table sx={{ minWidth: 960 }}>
+          <Table sx={{ minWidth: { xs: 0, md: 960 }, width: '100%' }}>
             <TableHead>
               <TableRow sx={{ bgcolor: '#ffffff', borderBottom: `1px solid ${colors.border}` }}>
-                <TableCell sx={{ width: 75, py: 1.75 }} align="center"></TableCell>
-                <TableCell sx={{ width: 110, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+                <TableCell sx={{ width: { xs: 50, md: 75 }, py: 1.75, px: { xs: 0.5, md: 1 } }} align="center"></TableCell>
+                <TableCell sx={{ width: { xs: 120, md: 110 }, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                   Mã căn
                 </TableCell>
-                <TableCell sx={{ width: 110, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+                <TableCell
+                  sx={{
+                    width: { xs: 'auto', md: 110 },
+                    fontWeight: 600,
+                    color: colors.tableHeader,
+                    fontSize: '0.875rem',
+                    textAlign: { xs: 'right', md: 'left' },
+                    pr: { xs: 2, md: 2 },
+                  }}
+                >
                   Giá bán
                 </TableCell>
-                <TableCell sx={{ width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                   Loại hình
                 </TableCell>
-                <TableCell sx={{ width: 110, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 110, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                   DT đất
                 </TableCell>
-                <TableCell sx={{ width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                   DT xây dựng
                 </TableCell>
-                <TableCell sx={{ width: 120, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 120, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                   Hướng
                 </TableCell>
-                <TableCell sx={{ width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}>
                   Phân khu
                 </TableCell>
                 <TableCell
-                  sx={{ width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}
+                  sx={{ display: { xs: 'none', md: 'table-cell' }, width: 130, fontWeight: 600, color: colors.tableHeader, fontSize: '0.875rem' }}
                   align="center"
                 >
                   Tình trạng
@@ -150,7 +174,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
                 const isSold = row.status === 'Đã bán';
                 return (
                   <TableRow key={row.id}>
-                    <TableCell align="center" sx={{ py: 1.5, px: 1 }}>
+                    <TableCell align="center" sx={{ py: 1.5, px: { xs: 0.5, md: 1 }, width: { xs: 50, md: 75 } }}>
                       <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75 }}>
                         {row.isHot ? (
                           <LocalFireDepartmentIcon sx={{ color: colors.hotIcon, fontSize: 18 }} />
@@ -160,7 +184,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
                         <LocationOnOutlinedIcon sx={{ color: colors.locationPin, fontSize: 19 }} />
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ py: 1.5 }}>
+                    <TableCell sx={{ py: 1.5, px: { xs: 1, md: 2 } }}>
                       <Chip
                         label={row.code}
                         size="small"
@@ -173,15 +197,24 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
                         }}
                       />
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 500, color: colors.textPrimary, fontSize: '0.875rem' }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 500,
+                        color: colors.textPrimary,
+                        fontSize: '0.875rem',
+                        textAlign: { xs: 'right', md: 'left' },
+                        pr: { xs: 2, md: 2 },
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {row.price}
                     </TableCell>
-                    <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>{row.type}</TableCell>
-                    <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>{row.areaLand}</TableCell>
-                    <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>{row.areaBuild}</TableCell>
-                    <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>{row.dir}</TableCell>
-                    <TableCell sx={{ color: colors.textPrimary, fontSize: '0.875rem' }}>{row.phase}</TableCell>
-                    <TableCell align="center">
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>{row.type}</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>{row.areaLand}</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>{row.areaBuild}</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>{row.dir}</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, color: colors.textPrimary, fontSize: '0.875rem' }}>{row.phase}</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }} align="center">
                       <Chip
                         label={row.status}
                         size="small"

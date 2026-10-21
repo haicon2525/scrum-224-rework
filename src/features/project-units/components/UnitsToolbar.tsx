@@ -23,20 +23,33 @@ export const UnitsToolbar: React.FC<UnitsToolbarProps> = ({
     <Box
       sx={{
         display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: { xs: 'stretch', sm: 'center' },
         mb: 2,
-        flexWrap: 'wrap',
         gap: 2,
       }}
     >
-      <Typography variant="h6" sx={{ fontWeight: 800, color: '#1d4ed8', letterSpacing: 0.5 }}>
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 800,
+          color: '#1d4ed8',
+          letterSpacing: 0.5,
+          fontSize: { xs: '1.25rem', sm: '1.25rem' },
+        }}
+      >
         BẢNG HÀNG
       </Typography>
 
-      <Stack direction="row" spacing={1.5} alignItems="center">
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1.5}
+        alignItems="stretch"
+        sx={{ width: { xs: '100%', sm: 'auto' } }}
+      >
         {/* Dropdown Sắp xếp */}
-        <FormControl size="small" sx={{ minWidth: 200 }}>
+        <FormControl size="small" sx={{ width: { xs: '100%', sm: 200 } }}>
           <Select
             value={filters.sort || ''}
             onChange={(e) => onFilterChange('sort', e.target.value)}
@@ -60,7 +73,7 @@ export const UnitsToolbar: React.FC<UnitsToolbarProps> = ({
         </FormControl>
 
         {/* Dropdown Trạng thái */}
-        <FormControl size="small" sx={{ minWidth: 170 }}>
+        <FormControl size="small" sx={{ width: { xs: '100%', sm: 170 } }}>
           <Select
             value={filters.statusCode || ''}
             onChange={(e) => onFilterChange('statusCode', e.target.value)}
@@ -95,6 +108,7 @@ export const UnitsToolbar: React.FC<UnitsToolbarProps> = ({
             fontWeight: 600,
             fontSize: '0.875rem',
             height: '40px',
+            width: { xs: '100%', sm: 'auto' },
             background: 'linear-gradient(90deg, #1d4ed8 0%, #0284c7 100%)',
             boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
             '&:hover': {

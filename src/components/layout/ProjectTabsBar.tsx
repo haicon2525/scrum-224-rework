@@ -74,6 +74,7 @@ export const ProjectTabsBar: React.FC<ProjectTabsBarProps> = ({
         background: 'linear-gradient(90deg, #1d4ed8 0%, #0284c7 46%, #009ee0 72%, #00b4d8 100%)',
         boxShadow: '0 4px 14px rgba(2, 132, 199, 0.25)',
         overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
         '&::-webkit-scrollbar': {
           display: 'none',
         },

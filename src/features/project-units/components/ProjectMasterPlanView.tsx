@@ -175,6 +175,28 @@ export const ProjectMasterPlanView: React.FC<ProjectMasterPlanViewProps> = ({
     setIsDragging(false);
   };
 
+  // Hỗ trợ cảm ứng kéo rê bản đồ trên màn hình điện thoại
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      const touch = e.touches[0];
+      setDragStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    setPan({
+      x: touch.clientX - dragStart.x,
+      y: touch.clientY - dragStart.y,
+    });
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   // Nút điều khiển Zoom
   const handleZoomIn = () => setScale((prev) => Math.min(prev + 0.5, 4));
   const handleZoomOut = () => setScale((prev) => Math.max(prev - 0.5, 0.7));
@@ -189,19 +211,25 @@ export const ProjectMasterPlanView: React.FC<ProjectMasterPlanViewProps> = ({
       <Paper
         elevation={0}
         sx={{
-          p: 2,
+          p: { xs: 1.5, sm: 2 },
           mb: 2,
           borderRadius: '12px',
           border: `1px solid ${colors.border}`,
           display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
+          alignItems: { xs: 'flex-start', sm: 'center' },
           gap: 1.5,
           bgcolor: '#ffffff',
         }}
       >
-        <Stack direction="row" spacing={1.5} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={1.25}
+          alignItems="center"
+          flexWrap="wrap"
+          sx={{ width: { xs: '100%', sm: 'auto' } }}
+        >
           {onBackToUnitsTab && (
             <Button
               startIcon={<ArrowBackIcon />}
@@ -214,33 +242,48 @@ export const ProjectMasterPlanView: React.FC<ProjectMasterPlanViewProps> = ({
                 borderRadius: '8px',
                 borderColor: colors.border,
                 color: colors.textPrimary,
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                px: { xs: 1.5, sm: 2 },
               }}
             >
               Về Quỹ căn
             </Button>
           )}
 
-          <Typography variant="h6" sx={{ fontWeight: 800, color: colors.deepBlue }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 800,
+              color: colors.deepBlue,
+              fontSize: { xs: '1.05rem', sm: '1.25rem' },
+            }}
+          >
             MẶT BẰNG QUỸ CĂN
           </Typography>
 
           {highlightedUnitCode && (
             <Chip
-              icon={<LocationOnIcon sx={{ color: '#ffffff !important', fontSize: '16px !important' }} />}
+              icon={<LocationOnIcon sx={{ color: '#ffffff !important', fontSize: '15px !important' }} />}
               label={`Đang định vị: ${highlightedUnitCode}`}
               size="small"
               sx={{
                 bgcolor: colors.primary,
                 color: '#ffffff',
                 fontWeight: 700,
-                fontSize: '0.8125rem',
+                fontSize: { xs: '0.75rem', sm: '0.8125rem' },
               }}
             />
           )}
         </Stack>
 
         {/* Cụm nút điều khiển Zoom */}
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          justifyContent={{ xs: 'flex-end', sm: 'flex-start' }}
+          sx={{ width: { xs: '100%', sm: 'auto' } }}
+        >
           <Tooltip title="Phóng to">
             <IconButton onClick={handleZoomIn} size="small" sx={{ border: `1px solid ${colors.border}`, bgcolor: '#fff' }}>
               <AddIcon fontSize="small" />
@@ -266,9 +309,12 @@ export const ProjectMasterPlanView: React.FC<ProjectMasterPlanViewProps> = ({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         sx={{
           width: '100%',
-          height: { xs: 450, sm: 550, md: 620 },
+          height: { xs: 380, sm: 500, md: 620 },
           borderRadius: '16px',
           border: `1px solid ${colors.border}`,
           bgcolor: '#f1f5f9',
@@ -276,6 +322,7 @@ export const ProjectMasterPlanView: React.FC<ProjectMasterPlanViewProps> = ({
           position: 'relative',
           cursor: isDragging ? 'grabbing' : 'grab',
           userSelect: 'none',
+          touchAction: 'none',
           boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.05)',
         }}
       >
@@ -427,10 +474,11 @@ export const ProjectMasterPlanView: React.FC<ProjectMasterPlanViewProps> = ({
             elevation={4}
             sx={{
               position: 'absolute',
-              bottom: 24,
-              left: 24,
-              maxWidth: 320,
-              width: '100%',
+              bottom: { xs: 12, sm: 24 },
+              left: { xs: 12, sm: 24 },
+              right: { xs: 12, sm: 'auto' },
+              maxWidth: { xs: 'calc(100% - 24px)', sm: 320 },
+              width: { xs: 'calc(100% - 24px)', sm: 320 },
               borderRadius: '14px',
               border: `1px solid ${colors.border}`,
               bgcolor: '#ffffff',

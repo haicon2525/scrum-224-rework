@@ -42,18 +42,18 @@ export const Footer: React.FC = () => {
         color: '#ffffff',
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ px: { xs: 2.5, sm: 3 } }}>
         <Box
           sx={{
             display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            flexWrap: 'wrap',
-            gap: { xs: 4, md: 5 },
+            gap: { xs: 3.5, md: 5 },
           }}
         >
           {/* CỘT 1: Logo & Thông tin liên hệ */}
-          <Box sx={{ maxWidth: 380, flex: '1 1 320px' }}>
+          <Box sx={{ width: { xs: '100%', md: 'auto' }, maxWidth: { xs: '100%', md: 380 }, flex: { xs: 'none', md: '1 1 320px' } }}>
             {/* Logo trắng */}
             <Box sx={{ display: 'inline-flex', alignItems: 'center', mb: 2 }}>
               <RealEstateLogo color="#ffffff" size={38} />
